@@ -9,3 +9,19 @@
         </div>
     </ion-content>
 </ion-pane>
+
+
+
+function(event){
+if((event.url).startsWith(BASE_ADMIN_URL)){
+ConfigService.getToken();
+EventService.getAllEvents(BASE_URL).success(function(result){
+$scope.events = result;
+}).error(function(error, status){
+alert(status);
+});
+
+ref.close();
+
+$scope.logged = true;
+}

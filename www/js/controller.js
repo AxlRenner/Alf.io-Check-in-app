@@ -5,7 +5,7 @@ var BASE_EVENTS_URL = BASE_ADMIN_URL + '#/events';
 
 angular.module('starter.controller', [])
 
-    .controller('AppCtrl', function($scope, $location, $cordovaBarcodeScanner, CheckInService, EventService) {
+    .controller('AppCtrl', function($scope, $location, $cordovaBarcodeScanner, CheckInService, EventService, ConfigService) {
         $scope.lgged = false;
         $scope.selectedEvent = false;
 
@@ -17,19 +17,27 @@ angular.module('starter.controller', [])
             var ref = window.open(BASE_URL + '/admin/', '_blank','location=no');
             ref.addEventListener('loadstop', function(event){
                 if((event.url).startsWith(BASE_ADMIN_URL)){
-                    EventService.getAllEvents(BASE_URL).success(function(result){
-                       $scope.events = result;
-                    }).error(function(error, status){
-                        alert(status);
-                    });
 
-                    ref.close();
-                    
-                    $scope.logged = true;
+                    var loop = setInterval(function(){
+                        ref.executeScript({
+                                code: " localStorage.getItem('Token')"
+
+                            },
+                            function(data){
+                                clearInterval(loop);
+                                ref.close();
+                                ConfigService.setToken(data);
+                                EventService.getAllEvents(BASE_URL).success(function(result){
+                                    $scope.events = result
+                                }).error(function(error, status){
+                                    alert(status)
+                                });
+                                $scope.logged = true;
+                            })
+                    })
                 }
-            })
+                })
         };
-
         $scope.selectEvent = function(event){
             $scope.eventName = event.shortName;
            $scope.eventId = event.id;
@@ -43,7 +51,7 @@ angular.module('starter.controller', [])
                 console.log("Cancelled -> " + result.cancelled);
                 var ticket = {'code': result.text};
                 CheckInService.checkIn(BASE_URL, $scope.eventId, ticket).success(function(result){
-                    alert(result);
+                   $scope.tickets = result;
                 }).error(function(error, status){
                     alert(status);
                 });
@@ -62,6 +70,9 @@ angular.module('starter.controller', [])
             };
         }
     });
+
+
+
 
 
 

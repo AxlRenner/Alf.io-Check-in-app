@@ -1,5 +1,4 @@
 <div>
-
     <div class="item item-input item-select" ng-show="logged">
         <div class="null">Select an Event:</div>
         <select ng-model="event" ng-options="event.shortName for event in events" ng-change="selectEvent(event)" >
@@ -12,5 +11,4 @@
     <button class="button button-full button-stable" ng-click="checkInFunc()" ng-show="selectedEvent">Check In</button>
     <button class="button button-full button-stable" ng-click="adminFunc()" ng-show="selectedEvent">Administration</button>
     <input name="_csrf" type="hidden" value="4df19b6a-ee7a-4ecf-a52f-60436121ed66">
-
 </div>
